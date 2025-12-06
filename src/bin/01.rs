@@ -1,18 +1,23 @@
 advent_of_code::solution!(1);
 
-pub fn part_one(input: &str) -> Option<u64> {
-    let numbers = input
+fn parse_rotations(input: &str) -> Vec<i16> {
+    input
         .split('\n')
         .filter(|s| !s.is_empty())
-        .map(|s| -> i16 {
-            let (direction, number) = (&s[..1], &s[1..]);
+        .map(|s| {
+            let direction = s.chars().next().unwrap();
+            let number = s[1..].parse::<i16>().unwrap();
             match direction {
-                "L" => -number.to_string().parse::<i16>().unwrap(),
-                "R" => number.to_string().parse::<i16>().unwrap(),
+                'L' => -number,
+                'R' => number,
                 _ => unreachable!(),
             }
         })
-        .collect::<Vec<i16>>();
+        .collect::<Vec<i16>>()
+}
+
+pub fn part_one(input: &str) -> Option<u64> {
+    let numbers = parse_rotations(input);
 
     let mut position = 50i16;
     let mut count = 0u64;
@@ -27,18 +32,7 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    let numbers = input
-        .split('\n')
-        .filter(|s| !s.is_empty())
-        .map(|s| -> i16 {
-            let (direction, number) = (&s[..1], &s[1..]);
-            match direction {
-                "L" => -number.to_string().parse::<i16>().unwrap(),
-                "R" => number.to_string().parse::<i16>().unwrap(),
-                _ => unreachable!(),
-            }
-        })
-        .collect::<Vec<i16>>();
+    let numbers = parse_rotations(input);
 
     let mut position = 50i16;
     let mut count = 0u64;
@@ -49,14 +43,14 @@ pub fn part_two(input: &str) -> Option<u64> {
         let full_circles = distance / 100;
         count += full_circles as u64;
 
-        let reminder = distance % 100;
+        let remainder = distance % 100;
 
         if rotation > 0 {
-            if position + reminder > 100 {
+            if position + remainder > 100 {
                 count += 1;
             }
         } else if rotation < 0 {
-            if position != 0 && position - reminder < 0 {
+            if position != 0 && position - remainder < 0 {
                 count += 1;
             }
         }
